@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical"
+    android:paddingHorizontal="40dp"
+    android:paddingVertical="10dp"
+    android:layout_marginTop="40dp">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/peso"
+                android:hint="Peso (kg)"
+                android:inputType="numberDecimal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <EditText
+                android:id="@+id/altura"
+                android:hint="Altura (cm)"
+                android:inputType="numberDecimal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <EditText
+                android:id="@+id/edad"
+                android:hint="Edad"
+                android:inputType="number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Género:"
+                android:textSize="17dp"
+                android:layout_marginTop="30dp">
+            </TextView>
+
+            <RadioGroup
+                android:id="@+id/radioGroupGender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:id="@+id/masculino"
+                    android:text="Hombre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <RadioButton
+                    android:id="@+id/femenino"
+                    android:text="Mujer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </RadioGroup>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Objetivo:"
+                android:textSize="17dp"
+                android:layout_marginTop="30dp">
+            </TextView>
+
+            <RadioGroup
+                android:id="@+id/radioObjetvio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:id="@+id/subirPeso"
+                    android:text="Subir de peso"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <RadioButton
+                    android:id="@+id/bajarPeso"
+                    android:text="Bajar de peso"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <RadioButton
+                    android:id="@+id/mantenerPeso"
+                    android:text="Mantener peso"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </RadioGroup>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nivel Actividad física:"
+                android:textSize="17dp"
+                android:layout_marginTop="30dp">
+            </TextView>
+
+            <RadioGroup
+                android:id="@+id/radioActividad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:id="@+id/sedentario"
+                    android:text="Sedentario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <RadioButton
+                    android:id="@+id/ligera"
+                    android:text="Actividad ligera"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <RadioButton
+                    android:id="@+id/moderada"
+                    android:text="Actividad moderada"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <RadioButton
+                    android:id="@+id/intensa"
+                    android:text="Actividad intensa"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <RadioButton
+                    android:id="@+id/muyintensa"
+                    android:text="Muy intensa"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </RadioGroup>
+
+            <Button
+                android:id="@+id/btnCalculateCalories"
+                android:text="Calcular Calorías"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"/>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="20dp">
+
+                <EditText
+                    android:id="@+id/editTextCaloriesMeal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Calorías de la comida"
+                    android:inputType="number"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:id="@+id/btnAddMeal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Añadir Comida"/>
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/textViewResultadoCalorias"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Calorías diarias recomendadas: "
+                android:textSize="18sp"
+                android:layout_marginTop="20dp"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/textViewTotalCaloriesConsumed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Total de calorías consumidas hoy: 0"
+                android:textSize="18sp"
+                android:layout_marginTop="20dp"/>
+
+
+
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+
+
+</LinearLayout>
