@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="food_catalog">
+        <item>Seleccione un alimento</item>
+        <item>Arroz - 200 cal</item>
+        <item>Pollo - 250 cal</item>
+        <item>Manzana - 80 cal</item>
+        <item>Pan - 120 cal</item>
+        <item>Leche - 100 cal</item>
+    </string-array>
+
+    <string name="select_food_prompt">Seleccione un alimento</string>
+</resources>
+

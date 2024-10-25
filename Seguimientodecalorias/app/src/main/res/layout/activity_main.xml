@@ -108,31 +108,36 @@
                 android:id="@+id/radioActividad"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <RadioButton
                     android:id="@+id/sedentario"
-                    android:text="Sedentario"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:text="Sedentario" />
+
                 <RadioButton
                     android:id="@+id/ligera"
-                    android:text="Actividad ligera"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:text="Actividad ligera" />
+
                 <RadioButton
                     android:id="@+id/moderada"
-                    android:text="Actividad moderada"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:text="Actividad moderada" />
+
                 <RadioButton
                     android:id="@+id/intensa"
-                    android:text="Actividad intensa"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:text="Actividad intensa" />
+
                 <RadioButton
                     android:id="@+id/muyintensa"
-                    android:text="Muy intensa"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:text="Muy intensa" />
 
             </RadioGroup>
 
@@ -146,16 +151,22 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_marginTop="20dp">
 
                 <EditText
+                    android:id="@+id/editTextMealName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Nombre de la comida"
+                    android:inputType="text" />
+
+                <EditText
                     android:id="@+id/editTextCaloriesMeal"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Calorías de la comida"
-                    android:inputType="number"
-                    android:layout_weight="1"/>
+                    android:inputType="number" />
 
                 <Button
                     android:id="@+id/btnAddMeal"
@@ -164,12 +175,20 @@
                     android:text="Añadir Comida"/>
             </LinearLayout>
 
+            <Spinner
+                android:id="@+id/spinnerFoodCatalog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/food_catalog"
+                android:prompt="@string/select_food_prompt"/>
+
+
 
             <TextView
                 android:id="@+id/textViewResultadoCalorias"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Calorías diarias recomendadas: "
+                android:text="Calorías diarias recomendadas:"
                 android:textSize="18sp"
                 android:layout_marginTop="20dp"
                 android:gravity="center"/>

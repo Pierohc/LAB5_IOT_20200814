@@ -9,8 +9,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -22,10 +25,11 @@ import androidx.core.app.NotificationManagerCompat;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText peso, altura, edad, editTextCaloriesMeal;
+    private EditText peso, altura, edad, editTextMealName, editTextCaloriesMeal;
     private RadioGroup radioGroupGender, radioObjetivo, radioActividad;
     private Button btnCalculateCalories, btnAddMeal;
     private TextView textViewResultadoCalorias, textViewTotalCaloriesConsumed;
+    private Spinner spinnerFoodCatalog;
 
     private int totalCaloriesConsumed = 0;
     private double controlador = 0;
@@ -50,13 +54,44 @@ public class MainActivity extends AppCompatActivity {
         textViewResultadoCalorias = findViewById(R.id.textViewResultadoCalorias);
 
 
+        editTextMealName = findViewById(R.id.editTextMealName);
         editTextCaloriesMeal = findViewById(R.id.editTextCaloriesMeal);
         btnAddMeal = findViewById(R.id.btnAddMeal);
         textViewTotalCaloriesConsumed = findViewById(R.id.textViewTotalCaloriesConsumed);
 
+        spinnerFoodCatalog = findViewById(R.id.spinnerFoodCatalog);
+
         btnCalculateCalories.setOnClickListener(v -> calculateCalories());
 
-        btnAddMeal.setOnClickListener(v -> addMealCalories());    }
+        btnAddMeal.setOnClickListener(v -> addMealCalories());
+
+        // Configurar el Spinner de catálogo de alimentos
+        spinnerFoodCatalog.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedItem = parent.getItemAtPosition(position).toString();
+                if (!selectedItem.equals("Seleccione un alimento")) {
+                    String[] parts = selectedItem.split(" - ");
+                    String foodName = parts[0];
+                    String foodCalories = parts[1].replace(" cal", "");
+
+                    editTextMealName.setText(foodName);
+                    editTextCaloriesMeal.setText(foodCalories);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // No hacer nada
+            }
+        });
+
+
+
+
+    }
+
+
 
     private void calculateCalories() {
         String pesoStr = peso.getText().toString();
@@ -120,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
                 caloriasDiarias += 500;
                 break;
             case "Bajar de peso":
-                caloriasDiarias -= 500;
+                caloriasDiarias -= 300;
                 break;
             case "Mantener peso":
                 // No se hace ajuste
@@ -134,9 +169,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void addMealCalories() {
         String mealCaloriesStr = editTextCaloriesMeal.getText().toString();
+        String mealName = editTextMealName.getText().toString();
 
-        if (mealCaloriesStr.isEmpty()) {
-            Toast.makeText(this, "Por favor, ingrese las calorías de la comida", Toast.LENGTH_SHORT).show();
+
+        if (mealCaloriesStr.isEmpty() || mealName.isEmpty()) {
+            Toast.makeText(this, "Por favor, ingrese el nombre y las calorías de la comida", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -148,12 +185,11 @@ public class MainActivity extends AppCompatActivity {
         if (totalCaloriesConsumed > controlador) {
             exceso = totalCaloriesConsumed - controlador;
             lanzarNotificacion(exceso);
-
         }
 
-
-            // Limpiar el campo de entrada
+        editTextMealName.setText("");
         editTextCaloriesMeal.setText("");
+        spinnerFoodCatalog.setSelection(0);
     }
 
 
