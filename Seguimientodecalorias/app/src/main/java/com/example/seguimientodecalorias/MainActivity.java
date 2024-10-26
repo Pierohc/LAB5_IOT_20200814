@@ -2,9 +2,11 @@ package com.example.seguimientodecalorias;
 
 import static android.Manifest.permission.POST_NOTIFICATIONS;
 
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -18,23 +20,27 @@ import android.widget.TextView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import java.util.Calendar;
+
 public class MainActivity extends AppCompatActivity {
 
-    private EditText peso, altura, edad, editTextMealName, editTextCaloriesMeal;
+    private EditText peso, altura, edad, editTextMealName, editTextCaloriesMeal, sportName,sportCalories;
     private RadioGroup radioGroupGender, radioObjetivo, radioActividad;
-    private Button btnCalculateCalories, btnAddMeal;
-    private TextView textViewResultadoCalorias, textViewTotalCaloriesConsumed;
+    private Button btnCalculateCalories, btnAddMeal, btnAddSport;
+    private TextView textViewResultadoCalorias, textViewTotalCaloriesConsumed, caloriasFaltantes;
     private Spinner spinnerFoodCatalog;
 
     private int totalCaloriesConsumed = 0;
     private double controlador = 0;
     private double exceso = 0;
-
+    private int notificationIntervalMinutes = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         radioActividad = findViewById(R.id.radioActividad);
         btnCalculateCalories = findViewById(R.id.btnCalculateCalories);
         textViewResultadoCalorias = findViewById(R.id.textViewResultadoCalorias);
+        caloriasFaltantes = findViewById(R.id.caloriasFaltantes);
 
 
         editTextMealName = findViewById(R.id.editTextMealName);
@@ -59,13 +66,18 @@ public class MainActivity extends AppCompatActivity {
         btnAddMeal = findViewById(R.id.btnAddMeal);
         textViewTotalCaloriesConsumed = findViewById(R.id.textViewTotalCaloriesConsumed);
 
+        sportName = findViewById(R.id.sportName);
+        sportCalories = findViewById(R.id.sportCalories);
+        btnAddSport = findViewById(R.id.btnAddSport);
+
         spinnerFoodCatalog = findViewById(R.id.spinnerFoodCatalog);
 
         btnCalculateCalories.setOnClickListener(v -> calculateCalories());
 
         btnAddMeal.setOnClickListener(v -> addMealCalories());
 
-        // Configurar el Spinner de catálogo de alimentos
+        btnAddSport.setOnClickListener(v -> quitarCalorias());
+
         spinnerFoodCatalog.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -82,11 +94,18 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                // No hacer nada
             }
         });
 
 
+        Calendar calendar = Calendar.getInstance();
+        int hora = calendar.get(Calendar.HOUR_OF_DAY);
+
+        if (hora >= 18 && hora < 23 && totalCaloriesConsumed==0) {
+            lanzarNotificacion4();
+        }
+        lanzarNotificacion3();
+        showNotificationIntervalDialog();
 
 
     }
@@ -167,6 +186,35 @@ public class MainActivity extends AppCompatActivity {
         textViewResultadoCalorias.setText("Calorías diarias: " + Math.round(caloriasDiarias));
     }
 
+
+
+    private void quitarCalorias(){
+        String caloriasDeporte = sportCalories.getText().toString();
+        String nombreDeporte = sportName.getText().toString();
+
+        if (caloriasDeporte.isEmpty() || nombreDeporte.isEmpty()) {
+            Toast.makeText(this, "Por favor, ingrese el nombre y las calorías de la actividad física", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        int caloriasQuemadas = Integer.parseInt(caloriasDeporte);
+
+
+        if (totalCaloriesConsumed >= caloriasQuemadas) {
+            totalCaloriesConsumed = totalCaloriesConsumed - caloriasQuemadas;
+            textViewTotalCaloriesConsumed.setText("Total de calorías consumidas hoy: " + totalCaloriesConsumed);
+        } else{
+            totalCaloriesConsumed = 0;
+            textViewTotalCaloriesConsumed.setText("Total de calorías consumidas hoy: " + totalCaloriesConsumed);
+
+        }
+
+        sportCalories.setText("");
+        sportName.setText("");
+
+
+    }
+
     private void addMealCalories() {
         String mealCaloriesStr = editTextCaloriesMeal.getText().toString();
         String mealName = editTextMealName.getText().toString();
@@ -182,15 +230,24 @@ public class MainActivity extends AppCompatActivity {
 
         textViewTotalCaloriesConsumed.setText("Total de calorías consumidas hoy: " + totalCaloriesConsumed);
 
-        if (totalCaloriesConsumed > controlador) {
+        if (totalCaloriesConsumed > controlador && controlador != 0) {
             exceso = totalCaloriesConsumed - controlador;
             lanzarNotificacion(exceso);
+            caloriasFaltantes.setText("META DIARIA: Ha superado el total de calorias que deberia consumir en el día");
+        }else if (totalCaloriesConsumed > controlador && controlador == 0){
+
+        }else{
+            Double resta;
+            resta = controlador - totalCaloriesConsumed;
+            caloriasFaltantes.setText("META DIARIA: Le resta consumir " + resta + " calorias.");
         }
 
         editTextMealName.setText("");
         editTextCaloriesMeal.setText("");
         spinnerFoodCatalog.setSelection(0);
     }
+
+
 
 
     String channelId = "channelDefaultPri";
@@ -220,8 +277,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void lanzarNotificacion(double exceso) {
-        Intent intent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
                 .setSmallIcon(R.drawable.baseline_send_24)
                 .setContentTitle("Alerta de Exceso de Calorías")
@@ -229,11 +284,136 @@ public class MainActivity extends AppCompatActivity {
                         "recomendadas en un día, se le\n" +
                         "sugiera realizar ejercicio o reducir las calorías en la próxima comida")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
+
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         if (ActivityCompat.checkSelfPermission(this, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
             notificationManager.notify(1, builder.build());
         }
     }
+
+    public void lanzarNotificacion2() {
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
+                .setSmallIcon(R.drawable.baseline_send_24)
+                .setContentTitle("Motivación para tu Objetivo")
+                .setContentText("¡Sigue adelante! Recuerda tu objetivo y mantente motivado.")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        if (ActivityCompat.checkSelfPermission(this, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            notificationManager.notify(2, builder.build()); // Usa un ID diferente para esta notificación
+        }
+    }
+
+    public void lanzarNotificacion3() {
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        Calendar calendar = Calendar.getInstance();
+        int hora = calendar.get(Calendar.HOUR_OF_DAY);
+
+        String comida = "¡No olvides registrar tu desayuno!";
+        if (hora >= 1 && hora < 12) {
+            comida = "¡No olvides registrar tu desayuno!";
+        } else if (hora >= 12 && hora < 18) {
+            comida = "¡No olvides registrar tu almuerzo!";
+        } else {
+            comida = "¡No olvides registrar tu cena!";
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
+                .setSmallIcon(R.drawable.baseline_send_24)
+                .setContentTitle("Recordatorio")
+                .setContentText(comida)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        if (ActivityCompat.checkSelfPermission(this, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            notificationManager.notify(3, builder.build());
+        }
+
+    }
+
+
+    public void lanzarNotificacion4() {
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
+                .setSmallIcon(R.drawable.baseline_send_24)
+                .setContentTitle("¡Alerta!")
+                .setContentText("No has registrado nunca comida durante el día.")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        if (ActivityCompat.checkSelfPermission(this, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            notificationManager.notify(3, builder.build());
+        }
+
+    }
+
+
+
+
+
+    private void showNotificationIntervalDialog() {
+        String[] intervals = {"15 minutos", "30 minutos", "45 minutos", "60 minutos"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Establece el intervalo de notificación");
+        builder.setCancelable(false);
+
+        builder.setSingleChoiceItems(intervals, -1, (dialog, which) -> {
+            switch (which) {
+                case 0:
+                    notificationIntervalMinutes = 15;
+                    break;
+                case 1:
+                    notificationIntervalMinutes = 30;
+                    break;
+                case 2:
+                    notificationIntervalMinutes = 45;
+                    break;
+                case 3:
+                    notificationIntervalMinutes = 60;
+                    break;
+            }
+        });
+
+        builder.setPositiveButton("Aceptar", (dialog, which) -> {
+            if (notificationIntervalMinutes > 0) {
+                Toast.makeText(this, "Notificación cada " + notificationIntervalMinutes + " minutos", Toast.LENGTH_SHORT).show();
+                scheduleMotivationNotification(notificationIntervalMinutes);
+            } else {
+                Toast.makeText(this, "Seleccione un intervalo", Toast.LENGTH_SHORT).show();
+                showNotificationIntervalDialog();
+            }
+        });
+
+        builder.show();
+    }
+
+    private void scheduleMotivationNotification(int minutes) {
+        Intent notificationIntent = new Intent(this, MotivationNotificationReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                this,
+                0,
+                notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        long intervalMillis = (long) minutes * 60 * 1000;
+
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + intervalMillis, intervalMillis, pendingIntent);
+    }
+
+
 }

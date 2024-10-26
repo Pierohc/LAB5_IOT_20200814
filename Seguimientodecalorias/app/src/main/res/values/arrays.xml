@@ -9,6 +9,6 @@
         <item>Leche - 100 cal</item>
     </string-array>
 
-    <string name="select_food_prompt">Seleccione un alimento</string>
+    <string name="select_food_prompt">Seleccionar del catálogo</string>
 </resources>
 
