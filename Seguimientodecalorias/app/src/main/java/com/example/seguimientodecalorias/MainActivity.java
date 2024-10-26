@@ -367,7 +367,7 @@ public class MainActivity extends AppCompatActivity {
         String[] intervals = {"15 minutos", "30 minutos", "45 minutos", "60 minutos"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Establece el intervalo de notificación");
+        builder.setTitle("Establece el intervalo de notificación de motivación");
         builder.setCancelable(false);
 
         builder.setSingleChoiceItems(intervals, -1, (dialog, which) -> {

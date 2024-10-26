@@ -26,11 +26,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="COMPLETE LOS SIGUIENTES DATOS:"
+                android:text="Complete los siguientes datos para calcular las calorías diarias que se le recomienda consumir:"
                 android:textSize="17dp"
                 android:layout_marginBottom="20dp"
                 android:textStyle="bold"
-                android:textColor="#FF5733">
+                android:textColor="#ea2d2d">
             </TextView>
 
 
@@ -212,7 +212,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="15dp"
                     android:text="COMPLETE PARA CALCULAR LAS CALORÍAS CONSUMIDAS EL DÍA DE HOY:"
-                    android:textColor="#FF5733"
+                    android:textColor="#ea2d2d"
                     android:textSize="15dp"
                     android:textStyle="bold"></TextView>
 
@@ -246,14 +246,22 @@
                     android:text="Añadir Comida" />
 
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:text="También puede añadir una actividad física que haya realizado para restar el gastó calórico a sus calorías consumidas durante el día."
+                    android:textColor="#9b9b9b"
+                    android:textSize="15dp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="30dp"></TextView>
 
                 <EditText
                     android:id="@+id/sportName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Nombre de la actividad física"
-                    android:inputType="text"
-                    android:layout_marginTop="40dp"/>
+                    android:inputType="text"/>
 
                 <EditText
                     android:id="@+id/sportCalories"
